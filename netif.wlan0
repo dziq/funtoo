@@ -1,0 +1,27 @@
+#!/sbin/runscript
+# Copyright 2009 Funtoo Technologies, LLC
+# All rights reserved. Released under the 2-clause BSD license.
+
+INT=wlan0
+PID=/var/run/wpa_wlan0.pid
+CONF=/etc/wpa_supplicant/wpa_supplicant.conf
+
+depend() {
+        provide net
+        after net.lo
+
+}
+
+start() {
+        ebegin "Bringing up network interface $INT"
+        wpa_supplicant -B -c$CONF -i$INT -P$PID
+        eend $?
+
+}
+
+stop() {
+        ebegin "Shutting down network interface $INT"
+        kill $(cat $PID)
+        rm $PID
+        eend $?
+} 
